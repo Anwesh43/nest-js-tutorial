@@ -13,6 +13,9 @@ export default class PersonService {
     }
 
     findPersonById(id : number) : Person | null {
+        if (isNaN(id)) {
+            throw new Error("id should be number")
+        }
         const person =  this.personRepository.getPersonById(id)
         if (!!person) {
             return person 

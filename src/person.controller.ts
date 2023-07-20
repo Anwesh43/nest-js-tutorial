@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Inject, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, UseFilters } from "@nestjs/common";
+import CommonExceptionFilter from "./exceptionfilters/CommonExceptionFilter";
 import Person, { PersonSaveStatus } from "./models/Person";
 import PersonService from "./person.service";
 
+@UseFilters(CommonExceptionFilter)
 @Controller("/person")
 export default class PersonController {
 
