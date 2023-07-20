@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, HttpException, Inject, Injectable } from "@nestjs/common";
 import Person from "./models/Person";
 import PersonRepository from "./person.repository";
 
@@ -13,7 +13,14 @@ export default class PersonService {
     }
 
     findPersonById(id : number) : Person | null {
-        return this.personRepository.getPersonById(id)
+        const person =  this.personRepository.getPersonById(id)
+        if (!!person) {
+            return person 
+        }
+        throw new HttpException("The person with the above Id is not present", 404, {
+            cause: new Error(),
+            description: "The person with the above Id is not present"
+        })
     }
 
     inserPerson(person : Person) {
