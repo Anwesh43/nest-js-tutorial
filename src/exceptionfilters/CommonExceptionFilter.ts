@@ -9,10 +9,12 @@ export default class CommonExceptionFilter implements ExceptionFilter{
         const ctx : HttpArgumentsHost  = host.switchToHttp()
         const response = ctx.getResponse<Response>()
         const request = ctx.getRequest<Request>()
-        
+        const err : Error = error as Error 
         response.status(500).json({
             url : request.url,
             params: request.params,
+            message: err.message || err.name,
+            stack : err.stack
         })
     }
 }

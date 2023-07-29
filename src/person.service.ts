@@ -29,4 +29,8 @@ export default class PersonService {
     inserPerson(person : Person) {
         this.personRepository.insertPerson(person)
     }
+
+    findPersonByName(name : string) : Person | null {
+        return this.personRepository.getPersonByName(name)
+    }
 }

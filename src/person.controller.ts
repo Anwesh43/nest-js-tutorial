@@ -1,5 +1,7 @@
-import { Body, Controller, Get, Inject, Param, Post, UseFilters } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, UseFilters, UseGuards } from "@nestjs/common";
 import CommonExceptionFilter from "./exceptionfilters/CommonExceptionFilter";
+import UnauthorizedExceptionFilter from "./exceptionfilters/UnauthorizedExceptionFilter";
+import UserGuard from "./guards/UserGuard";
 import Person, { PersonSaveStatus } from "./models/Person";
 import PersonService from "./person.service";
 
@@ -26,5 +28,12 @@ export default class PersonController {
         return {
             "status": "ok"
         }
+    }
+
+    @Get("byname/:name")
+    @UseGuards(UserGuard)
+    @UseFilters(UnauthorizedExceptionFilter)
+    public findPersonByName(@Param('name') name : string) {
+        return this.personService.findPersonByName(name)
     }
 }
