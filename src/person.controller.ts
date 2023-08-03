@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Inject, Param, Post, UseFilters, UseGuards, UseInterceptors, UsePipes } from "@nestjs/common";
+import Cookie from "./decorators/Cookie.decorator";
 import CommonExceptionFilter from "./exceptionfilters/CommonExceptionFilter";
 import UnauthorizedExceptionFilter from "./exceptionfilters/UnauthorizedExceptionFilter";
 import UserGuard from "./guards/UserGuard";
@@ -24,7 +25,7 @@ export default class PersonController {
     }
 
     @UseInterceptors(ResponseInterceptor)
-    @Get("/:id")
+    @Get("byid/:id")
     public findPersonById(@Param('id') id : string) : Person | {} {
         return this.personService.findPersonById(parseInt(id)) || {}
     }
@@ -37,14 +38,14 @@ export default class PersonController {
         }
     }
 
-    @Get("byname/:name")
+    @Get("/byname/:name")
     @UseGuards(UserGuard)
     @UseFilters(UnauthorizedExceptionFilter)
     public findPersonByName(@Param('name') name : string) {
         return this.personService.findPersonByName(name)
     }
 
-    @Post("savebystring")
+    @Post("/savebystring")
     @UsePipes(StringToPersonPipe)
     public savePersonByString(@Body() person : Person) : SuccessResponse {
         console.log("PERSON___", person)
@@ -53,5 +54,12 @@ export default class PersonController {
             "status": "ok",
             "message": "saved person successfully"
         }
+    }
+
+    @Get("/idfromcookie")
+    @UseInterceptors(ResponseInterceptor)
+    getPeronFromCookieId(@Cookie('id') id : string) {
+        console.log("IDDDD", id)
+        return this.personService.findPersonById(parseInt(id))
     }
 }
