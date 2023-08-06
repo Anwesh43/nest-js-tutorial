@@ -8,11 +8,15 @@ import LoggerMiddleware from './middlewares/logger.middleware';
 import PersonController from './person.controller';
 import PersonRepository from './person.repository';
 import PersonService from './person.service';
+import AnalyticsService from './services/analytics.service';
 
 @Module({
   imports: [],
   controllers: [AppController, PersonController],
-  providers: [AppService, PersonService, PersonRepository, UserGuard, LoggingInterceptor],
+  providers: [AppService, PersonService, PersonRepository, UserGuard, LoggingInterceptor, {
+    provide: AnalyticsService, 
+    useValue: new AnalyticsService('person')
+  }],
 })
 export class AppModule implements NestModule{
 

@@ -8,6 +8,7 @@ import ResponseInterceptor from "./interceptors/ResponseInterceptor";
 import Person, { PersonSaveStatus } from "./models/Person";
 import PersonService from "./person.service";
 import StringToPersonPipe from "./pipes/StringToPersonPipe";
+import AnalyticsService from "./services/analytics.service";
 import { SuccessResponse } from "./typing";
 
 @UseFilters(CommonExceptionFilter)
@@ -18,6 +19,9 @@ export default class PersonController {
     @Inject()
     personService : PersonService
 
+    @Inject()
+    analyticsService : AnalyticsService 
+
     @UseInterceptors(ResponseInterceptor)
     @Get("/all")
     public getPersons() : Array<Person> {
@@ -27,11 +31,13 @@ export default class PersonController {
     @UseInterceptors(ResponseInterceptor)
     @Get("byid/:id")
     public findPersonById(@Param('id') id : string) : Person | {} {
+        this.analyticsService.logEvent('FETCH_BY_ID', {id})
         return this.personService.findPersonById(parseInt(id)) || {}
     }
 
     @Post("/save")
     public savePerson(@Body() personDao : Person) : PersonSaveStatus {
+        this.analyticsService.logEvent('INSERT_PERSON',  personDao)
         this.personService.inserPerson(personDao)
         return {
             "status": "ok"
@@ -42,6 +48,7 @@ export default class PersonController {
     @UseGuards(UserGuard)
     @UseFilters(UnauthorizedExceptionFilter)
     public findPersonByName(@Param('name') name : string) {
+        this.analyticsService.logEvent('FETCH_BY_NAME',  {name})
         return this.personService.findPersonByName(name)
     }
 
